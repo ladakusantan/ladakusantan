@@ -60,8 +60,12 @@ const App: React.FC = () => {
     const projectsTop = projectsContainer.offsetTop;
     const projectsHeight = projectsContainer.offsetHeight;
     const totalProjects = 5;
+
+    // Correct Progress-to-Scroll mapping
+    const scrollRange = projectsHeight - window.innerHeight;
     const focalPoints = Array.from({ length: totalProjects }, (_, i) => {
-      return projectsTop + ((i + 0.5) / totalProjects) * projectsHeight;
+      const progress = (i + 0.5) / totalProjects;
+      return projectsTop + (progress * scrollRange);
     });
 
     const aboutTop = aboutContainer.offsetTop;
