@@ -79,13 +79,16 @@ const App: React.FC = () => {
 
       if (currentTargetIndex < totalProjects) {
         const target = focalPoints[currentTargetIndex];
+        const dist = target - currentScroll;
 
-        if (currentScroll < target - 5) {
-          // INCREASED SPEED: 4px per frame instead of 2px
-          window.scrollBy(0, 4);
+        if (dist > 2) {
+          // DYNAMIC VELOCITY: Fast when far, smooth & slow when near
+          // Max speed 12px, Min speed 1px
+          const dynamicSpeed = Math.max(1, Math.min(12, dist / 25));
+          window.scrollBy(0, dynamicSpeed);
           requestAnimationFrame(autopilot);
         } else {
-          // Arrived at project focal point - TRIGGER AUTO DIVE
+          // Arrived at project focal point - TRIGGER IMMEDIATELY
           isPaused = true;
           setActiveTourProjectIndex(currentTargetIndex);
 
@@ -101,10 +104,12 @@ const App: React.FC = () => {
               currentTargetIndex++;
               requestAnimationFrame(autopilot);
             }, 1200); // Buffer for modal close transition
-          }, 3500); // Wait 3.5s to read project details
+          }, 4500); // Increased to 4.5s for better reading time
         }
       } else if (currentScroll < destination) {
-        window.scrollBy(0, 8); // Faster crawl to About section
+        const distToAbout = destination - currentScroll;
+        const speedToAbout = Math.max(2, Math.min(15, distToAbout / 20));
+        window.scrollBy(0, speedToAbout);
         requestAnimationFrame(autopilot);
       } else {
         tourRef.current = false;
