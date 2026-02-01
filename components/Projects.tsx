@@ -275,7 +275,10 @@ const CSS3DProjectNode: React.FC<{
   );
 };
 
-const Projects: React.FC<{ onToggleView?: (active: boolean) => void }> = ({ onToggleView }) => {
+const Projects: React.FC<{
+  onToggleView?: (active: boolean) => void;
+  activeTourIndex?: number | null;
+}> = ({ onToggleView, activeTourIndex }) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -295,10 +298,25 @@ const Projects: React.FC<{ onToggleView?: (active: boolean) => void }> = ({ onTo
     // Faster, smoother transition delay
     setTimeout(() => {
       setSelectedProject(project);
-      setIsDiving(true); // Keep active for modal
+      setIsDiving(true);
       setDivingProject(null);
     }, 1000);
   };
+
+  // Monitor Tour Logic
+  useEffect(() => {
+    if (activeTourIndex !== undefined && activeTourIndex !== null) {
+      const project = PROJECTS[activeTourIndex];
+      if (project && selectedProject?.id !== project.id) {
+        handleProjectSelect(project);
+      }
+    } else if (activeTourIndex === null && selectedProject) {
+      // Auto-close modal when tour clears index
+      setSelectedProject(null);
+      setIsDiving(false);
+      onToggleView?.(false);
+    }
+  }, [activeTourIndex]);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);

@@ -26,6 +26,7 @@ const App: React.FC = () => {
   const [isLightning, setIsLightning] = useState(false);
   const [isProjectViewActive, setIsProjectViewActive] = useState(false);
   const [isTourActive, setIsTourActive] = useState(false);
+  const [activeTourProjectIndex, setActiveTourProjectIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,6 +42,7 @@ const App: React.FC = () => {
     if (tourRef.current) {
       tourRef.current = false;
       setIsTourActive(false);
+      setActiveTourProjectIndex(null);
       return;
     }
 
@@ -79,23 +81,35 @@ const App: React.FC = () => {
         const target = focalPoints[currentTargetIndex];
 
         if (currentScroll < target - 5) {
-          window.scrollBy(0, 2); // Even slower crawl for buttery smooth look
+          // INCREASED SPEED: 4px per frame instead of 2px
+          window.scrollBy(0, 4);
           requestAnimationFrame(autopilot);
         } else {
+          // Arrived at project focal point - TRIGGER AUTO DIVE
           isPaused = true;
+          setActiveTourProjectIndex(currentTargetIndex);
+
           setTimeout(() => {
             if (!tourRef.current) return;
-            isPaused = false;
-            currentTargetIndex++;
-            requestAnimationFrame(autopilot);
-          }, 3000);
+
+            // AUTO EXIT AFTER DETAILS SHOWN
+            setActiveTourProjectIndex(null);
+
+            setTimeout(() => {
+              if (!tourRef.current) return;
+              isPaused = false;
+              currentTargetIndex++;
+              requestAnimationFrame(autopilot);
+            }, 1200); // Buffer for modal close transition
+          }, 3500); // Wait 3.5s to read project details
         }
       } else if (currentScroll < destination) {
-        window.scrollBy(0, 4);
+        window.scrollBy(0, 8); // Faster crawl to About section
         requestAnimationFrame(autopilot);
       } else {
         tourRef.current = false;
         setIsTourActive(false);
+        setActiveTourProjectIndex(null);
       }
     };
 
@@ -103,6 +117,7 @@ const App: React.FC = () => {
     const stopTour = () => {
       tourRef.current = false;
       setIsTourActive(false);
+      setActiveTourProjectIndex(null);
     };
     window.addEventListener('wheel', stopTour, { once: true });
     window.addEventListener('touchmove', stopTour, { once: true });
@@ -111,7 +126,6 @@ const App: React.FC = () => {
   };
 
   const triggerThemeChange = (index: number) => {
-    // ... (rest of function unchanged)
     const newIndex = index % THEME_COLORS.length;
     setColorIndex(newIndex);
     setIsLightning(true);
@@ -137,8 +151,12 @@ const App: React.FC = () => {
             className="fixed right-12 top-24 z-[2000] flex items-center gap-4 pointer-events-none"
           >
             <div className="tech-mono text-[9px] text-theme text-right uppercase tracking-[0.4em] leading-relaxed">
-              <span className="block font-black">Autopilot_Engaged_V1.0</span>
-              <span className="block text-white/40 italic">Guided_Exploration_Mode</span>
+              <span className="block font-black">
+                {activeTourProjectIndex !== null ? 'SYNCING_PROJECT_INTEL...' : 'Autopilot_Engaged_V2.0'}
+              </span>
+              <span className="block text-white/40 italic">
+                {activeTourProjectIndex !== null ? `DECRYPTING_NODE_0${activeTourProjectIndex + 1}` : 'Guided_Exploration_Mode'}
+              </span>
             </div>
             <div className="w-1 h-12 bg-white/5 relative overflow-hidden">
               <motion.div
@@ -152,7 +170,6 @@ const App: React.FC = () => {
       </AnimatePresence>
 
       {isLightning && (
-        // ... (rest of lightning overlay unchanged)
         <div className="fixed inset-0 z-[1001] pointer-events-none opacity-40">
           <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path
@@ -168,7 +185,6 @@ const App: React.FC = () => {
 
       <AnimatePresence>
         {isLoading && (
-          // ... (rest of loader unchanged)
           <motion.div
             key="loader"
             initial={{ opacity: 1 }}
@@ -207,7 +223,7 @@ const App: React.FC = () => {
         <main>
           <Hero />
           <ServiceMarquee />
-          <Projects onToggleView={setIsProjectViewActive} />
+          <Projects onToggleView={setIsProjectViewActive} activeTourIndex={activeTourProjectIndex} />
           <Suspense fallback={<div className="h-screen bg-black" />}>
             <AboutMe onThemeChange={triggerThemeChange} />
           </Suspense>
