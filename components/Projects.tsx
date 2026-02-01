@@ -1,9 +1,11 @@
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, Suspense, lazy } from 'react';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence, useMotionValue } from 'framer-motion';
 import { PROJECTS } from '../constants';
-import ProjectModal from './ProjectModal';
 import { Project } from '../types';
+
+// Lazy Load Modal for better initial bundle size
+const ProjectModal = lazy(() => import('./ProjectModal'));
 
 const TypingText: React.FC<{ text: string; active: boolean }> = ({ text, active }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -211,28 +213,41 @@ const CSS3DProjectNode: React.FC<{
             </div>
 
             <div className="mt-auto space-y-3 md:space-y-4 preserve-3d">
+              {/* SMOOTH MEDIA CONTAINER */}
               <motion.div
                 style={{ transform: useTransform(springTX, () => `translateZ(${isHovered ? 200 : (isFocused ? 60 : 0)}px)`) }}
                 className="aspect-video rounded-sm overflow-hidden border border-white/5 relative group-hover:border-theme/30 transition-all duration-1000 bg-black shadow-[0_60px_120px_rgba(0,0,0,0.9)] cursor-pointer pointer-events-auto"
                 onClick={onSelect}
               >
-                {project.video ? (
-                  <video
-                    src={project.video}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className={`w-full h-full object-cover grayscale transition-all duration-1000 ${isFocused ? 'grayscale-0 opacity-80 scale-105' : 'opacity-10 scale-100'}`}
-                  />
-                ) : (
-                  <motion.img
-                    src={project.image}
-                    alt={project.title}
-                    style={{ y: imageY }}
-                    className={`w-full h-[140%] object-cover grayscale transition-all duration-1000 ${isFocused ? 'grayscale-0 opacity-80 scale-105' : 'opacity-10 scale-100'}`}
-                  />
-                )}
+                <AnimatePresence mode="wait">
+                  {isFocused && project.video ? (
+                    <motion.video
+                      key="video"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 0.8 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 1 }}
+                      src={project.video}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover scale-105"
+                    />
+                  ) : (
+                    <motion.img
+                      key="image"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: isFocused ? 0.3 : 0.1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 1 }}
+                      src={project.image}
+                      alt={project.title}
+                      style={{ y: imageY }}
+                      className={`w-full h-[140%] object-cover grayscale transition-all duration-1000 ${isFocused ? 'scale-105' : 'scale-100'}`}
+                    />
+                  )}
+                </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent"></div>
               </motion.div>
 
@@ -353,20 +368,11 @@ const Projects: React.FC<{ onToggleView?: (active: boolean) => void }> = ({ onTo
                 scale: [1.1, 1.4, 2],
                 filter: ['blur(0px)', 'blur(10px)', 'blur(60px)']
               }}
-              transition={{
-                duration: 1,
-                ease: "easeOut"
-              }}
+              transition={{ duration: 1, ease: "easeOut" }}
               className="fixed inset-0 z-[3000] pointer-events-none flex items-center justify-center overflow-hidden"
             >
               {divingProject.video ? (
-                <video
-                  src={divingProject.video}
-                  autoPlay
-                  muted
-                  loop
-                  className="w-full h-full object-cover"
-                />
+                <video src={divingProject.video} autoPlay muted loop className="w-full h-full object-cover" />
               ) : (
                 <img src={divingProject.image} className="w-full h-full object-cover" />
               )}
@@ -375,15 +381,17 @@ const Projects: React.FC<{ onToggleView?: (active: boolean) => void }> = ({ onTo
           )}
         </AnimatePresence>
 
-        {/* PROJECT DETAIL MODAL */}
-        <ProjectModal
-          project={selectedProject}
-          onClose={() => {
-            setSelectedProject(null);
-            setIsDiving(false);
-            onToggleView?.(false);
-          }}
-        />
+        {/* PROJECT DETAIL MODAL - LAZY LOADED */}
+        <Suspense fallback={null}>
+          <ProjectModal
+            project={selectedProject}
+            onClose={() => {
+              setSelectedProject(null);
+              setIsDiving(false);
+              onToggleView?.(false);
+            }}
+          />
+        </Suspense>
 
         <div className="absolute left-12 bottom-12 flex flex-col gap-2 tech-mono text-[9px] text-white/10 tracking-[0.5em] uppercase pointer-events-none">
           <div className="flex items-center gap-3">

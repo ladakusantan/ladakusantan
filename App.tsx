@@ -1,22 +1,23 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import ServiceMarquee from './components/ServiceMarquee';
 import Projects from './components/Projects';
-import AboutMe from './components/AboutMe';
-import Testimonials from './components/Testimonials';
 import Footer from './components/Footer';
 import BackgroundBackground from './components/BackgroundBackground';
 
-// Theme Colors: Cyan, Red, Yellow, Green, Orange
+// Lazy load heavy sections
+const AboutMe = lazy(() => import('./components/AboutMe'));
+const Testimonials = lazy(() => import('./components/Testimonials'));
+
 const THEME_COLORS = [
-  { main: '#00ffcc', glow: 'rgba(0, 255, 204, 0.4)', bg: 'rgba(0, 255, 204, 0.02)' }, // Cyan
-  { main: '#ff3333', glow: 'rgba(255, 51, 51, 0.4)', bg: 'rgba(255, 51, 51, 0.02)' }, // Red
-  { main: '#ffff33', glow: 'rgba(255, 255, 51, 0.4)', bg: 'rgba(255, 255, 51, 0.02)' }, // Yellow
-  { main: '#33ff33', glow: 'rgba(51, 255, 51, 0.4)', bg: 'rgba(51, 255, 51, 0.02)' }, // Green
-  { main: '#ff9933', glow: 'rgba(255, 153, 51, 0.4)', bg: 'rgba(255, 153, 51, 0.02)' }  // Orange
+  { main: '#00ffcc', glow: 'rgba(0, 255, 204, 0.4)', bg: 'rgba(0, 255, 204, 0.02)' },
+  { main: '#ff3333', glow: 'rgba(255, 51, 51, 0.4)', bg: 'rgba(255, 51, 51, 0.02)' },
+  { main: '#ffff33', glow: 'rgba(255, 255, 51, 0.4)', bg: 'rgba(255, 255, 51, 0.02)' },
+  { main: '#33ff33', glow: 'rgba(51, 255, 51, 0.4)', bg: 'rgba(51, 255, 51, 0.02)' },
+  { main: '#ff9933', glow: 'rgba(255, 153, 51, 0.4)', bg: 'rgba(255, 153, 51, 0.02)' }
 ];
 
 const App: React.FC = () => {
@@ -35,11 +36,9 @@ const App: React.FC = () => {
   const triggerThemeChange = (index: number) => {
     const newIndex = index % THEME_COLORS.length;
     setColorIndex(newIndex);
-
     setIsLightning(true);
     setTimeout(() => setIsLightning(false), 500);
 
-    // Update CSS Variables for global styling
     const theme = THEME_COLORS[newIndex];
     document.documentElement.style.setProperty('--theme-color', theme.main);
     document.documentElement.style.setProperty('--theme-glow', theme.glow);
@@ -105,8 +104,12 @@ const App: React.FC = () => {
           <Hero />
           <ServiceMarquee />
           <Projects onToggleView={setIsProjectViewActive} />
-          <AboutMe onThemeChange={triggerThemeChange} />
-          <Testimonials />
+          <Suspense fallback={<div className="h-screen bg-black" />}>
+            <AboutMe onThemeChange={triggerThemeChange} />
+          </Suspense>
+          <Suspense fallback={<div className="h-screen bg-black" />}>
+            <Testimonials />
+          </Suspense>
         </main>
 
         <Footer />
