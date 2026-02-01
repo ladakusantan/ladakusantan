@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow Operations | Anonymous Security Expert</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --theme-color: #00ffcc;
+            --theme-glow: rgba(0, 255, 204, 0.4);
+            --theme-bg: rgba(0, 255, 204, 0.02);
+            --neon-magenta: #ff00ff;
+            --deep-purple: #2a0052;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030303;
+            color: #ffffff;
+            margin: 0;
+            overflow-x: hidden;
+            transition: color 0.5s ease;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .tech-mono {
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        @keyframes scrollLeft {
+            to {
+                left: -350px;
+            }
+        }
+
+        @keyframes scrollRight {
+            from {
+                left: -350px;
+            }
+
+            to {
+                left: max(calc(350px * 8), 100%);
+            }
+        }
+
+        .marquee-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            mask-image: linear-gradient(to right,
+                    rgba(0, 0, 0, 0),
+                    rgba(0, 0, 0, 1) 15%,
+                    rgba(0, 0, 0, 1) 85%,
+                    rgba(0, 0, 0, 0));
+        }
+
+        .marquee-item {
+            position: absolute;
+            left: max(calc(350px * 8), 100%);
+            animation-name: scrollLeft;
+            animation-duration: 40s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            width: 260px;
+        }
+
+        .marquee-item-rev {
+            position: absolute;
+            left: max(calc(350px * 8), 100%);
+            animation-name: scrollRight;
+            animation-duration: 40s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            width: 260px;
+        }
+
+        @media (min-width: 768px) {
+
+            .marquee-item,
+            .marquee-item-rev {
+                width: 320px;
+            }
+        }
+
+        @keyframes scan {
+            from {
+                top: -100%;
+            }
+
+            to {
+                top: 200%;
+            }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Scanline Effect */
+        .scanlines::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 100;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #030303;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333;
+        }
+
+        .tight-heading {
+            line-height: 0.85;
+            letter-spacing: -0.05em;
+        }
+
+        /* Theme Accent Helpers */
+        .text-theme {
+            color: var(--theme-color);
+        }
+
+        .bg-theme {
+            background-color: var(--theme-color);
+        }
+
+        .border-theme {
+            border-color: var(--theme-color);
+        }
+
+        .shadow-theme {
+            box-shadow: 0 0 15px var(--theme-glow);
+        }
+
+        /* Lightning Flash Effect */
+        @keyframes lightning-flash {
+            0% {
+                opacity: 0;
+                background-color: rgba(255, 255, 255, 0);
+            }
+
+            10% {
+                opacity: 1;
+                background-color: rgba(255, 255, 255, 0.8);
+            }
+
+            15% {
+                opacity: 0.3;
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+
+            25% {
+                opacity: 1;
+                background-color: rgba(255, 255, 255, 0.9);
+            }
+
+            100% {
+                opacity: 0;
+                background-color: rgba(255, 255, 255, 0);
+            }
+        }
+
+        .lightning-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+
+        .active-flash {
+            animation: lightning-flash 0.4s ease-out forwards;
+        }
+
+        /* 3D Helix Support */
+        .perspective-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+        }
+
+        .preserve-3d {
+            transform-style: preserve-3d;
+        }
+
+        .theme-transition {
+            transition: color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 3D Cube Faces Helper */
+        .cube-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: visible;
+        }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "framer-motion": "https://esm.sh/framer-motion@^12.25.0",
+    "three": "https://esm.sh/three@0.170.0"
+  }
+}
+</script>
+    <link rel="stylesheet" href="/index.css">
+</head>
+
+<body class="scanlines">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
