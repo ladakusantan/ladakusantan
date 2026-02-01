@@ -49,9 +49,8 @@ const App: React.FC = () => {
     tourRef.current = true;
     setIsTourActive(true);
 
-    // Jump to top first
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    await new Promise(r => setTimeout(r, 1000));
+    // Reset all states before starting
+    setActiveTourProjectIndex(null);
 
     const projectsContainer = document.getElementById('projects');
     const aboutContainer = document.getElementById('about');
@@ -86,9 +85,14 @@ const App: React.FC = () => {
         const target = focalPoints[currentTargetIndex];
         const dist = target - currentScroll;
 
-        if (dist > 5) { // Stop slightly earlier for a clean landing
-          const dynamicSpeed = Math.max(1, Math.min(15, dist / 20));
-          window.scrollBy(0, dynamicSpeed);
+        if (Math.abs(dist) > 5) {
+          // BIDIRECTIONAL SPEED: Fast return (up to 25px) or smooth approach (up to 15px)
+          const isReturning = dist < 0;
+          const dynamicSpeed = isReturning
+            ? Math.max(2, Math.min(25, Math.abs(dist) / 10))
+            : Math.max(1, Math.min(15, dist / 20));
+
+          window.scrollBy(0, isReturning ? -dynamicSpeed : dynamicSpeed);
           requestAnimationFrame(autopilot);
         } else {
           // STEP 1: ARRIVE AT NODE
