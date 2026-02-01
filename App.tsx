@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, Suspense, lazy } from 'react';
+import React, { useEffect, useState, Suspense, lazy, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -25,6 +25,7 @@ const App: React.FC = () => {
   const [colorIndex, setColorIndex] = useState(0);
   const [isLightning, setIsLightning] = useState(false);
   const [isProjectViewActive, setIsProjectViewActive] = useState(false);
+  const [isTourActive, setIsTourActive] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -33,7 +34,84 @@ const App: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const tourRef = useRef(false);
+
+  // TOUR ORCHESTRATION LOGIC
+  const startTour = async () => {
+    if (tourRef.current) {
+      tourRef.current = false;
+      setIsTourActive(false);
+      return;
+    }
+
+    tourRef.current = true;
+    setIsTourActive(true);
+
+    // Jump to top first
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    await new Promise(r => setTimeout(r, 1000));
+
+    const projectsContainer = document.getElementById('projects');
+    const aboutContainer = document.getElementById('about');
+    if (!projectsContainer || !aboutContainer) return;
+
+    const projectsTop = projectsContainer.offsetTop;
+    const projectsHeight = projectsContainer.offsetHeight;
+    const totalProjects = 5;
+    const focalPoints = Array.from({ length: totalProjects }, (_, i) => {
+      return projectsTop + ((i + 0.5) / totalProjects) * projectsHeight;
+    });
+
+    const aboutTop = aboutContainer.offsetTop;
+    const destination = aboutTop + 100;
+
+    let currentTargetIndex = 0;
+    let isPaused = false;
+
+    const autopilot = () => {
+      if (!tourRef.current) return;
+
+      const currentScroll = window.scrollY;
+
+      if (isPaused) return;
+
+      if (currentTargetIndex < totalProjects) {
+        const target = focalPoints[currentTargetIndex];
+
+        if (currentScroll < target - 5) {
+          window.scrollBy(0, 2); // Even slower crawl for buttery smooth look
+          requestAnimationFrame(autopilot);
+        } else {
+          isPaused = true;
+          setTimeout(() => {
+            if (!tourRef.current) return;
+            isPaused = false;
+            currentTargetIndex++;
+            requestAnimationFrame(autopilot);
+          }, 3000);
+        }
+      } else if (currentScroll < destination) {
+        window.scrollBy(0, 4);
+        requestAnimationFrame(autopilot);
+      } else {
+        tourRef.current = false;
+        setIsTourActive(false);
+      }
+    };
+
+    // Manual Override: Stop tour on wheel/touch
+    const stopTour = () => {
+      tourRef.current = false;
+      setIsTourActive(false);
+    };
+    window.addEventListener('wheel', stopTour, { once: true });
+    window.addEventListener('touchmove', stopTour, { once: true });
+
+    autopilot();
+  };
+
   const triggerThemeChange = (index: number) => {
+    // ... (rest of function unchanged)
     const newIndex = index % THEME_COLORS.length;
     setColorIndex(newIndex);
     setIsLightning(true);
@@ -49,7 +127,32 @@ const App: React.FC = () => {
     <div className="relative min-h-screen selection:bg-cyan-500/30">
       <div className={`lightning-overlay ${isLightning ? 'active-flash' : ''}`} />
 
+      {/* AUTOPILOT HUD INDICATOR */}
+      <AnimatePresence>
+        {isTourActive && (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="fixed right-12 top-24 z-[2000] flex items-center gap-4 pointer-events-none"
+          >
+            <div className="tech-mono text-[9px] text-theme text-right uppercase tracking-[0.4em] leading-relaxed">
+              <span className="block font-black">Autopilot_Engaged_V1.0</span>
+              <span className="block text-white/40 italic">Guided_Exploration_Mode</span>
+            </div>
+            <div className="w-1 h-12 bg-white/5 relative overflow-hidden">
+              <motion.div
+                animate={{ y: [-48, 48] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-x-0 h-4 bg-theme shadow-theme"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {isLightning && (
+        // ... (rest of lightning overlay unchanged)
         <div className="fixed inset-0 z-[1001] pointer-events-none opacity-40">
           <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path
@@ -65,6 +168,7 @@ const App: React.FC = () => {
 
       <AnimatePresence>
         {isLoading && (
+          // ... (rest of loader unchanged)
           <motion.div
             key="loader"
             initial={{ opacity: 1 }}
@@ -95,7 +199,7 @@ const App: React.FC = () => {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="fixed top-0 left-0 right-0 z-[1000]"
             >
-              <Navbar />
+              <Navbar onStartTour={startTour} isTourActive={isTourActive} />
             </motion.div>
           )}
         </AnimatePresence>
