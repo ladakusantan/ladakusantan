@@ -17,15 +17,15 @@ const Hero: React.FC = () => {
         </motion.h1>
       </div>
 
-      <div className="container mx-auto px-6 relative z-10 grid md:grid-cols-12 gap-4 items-center">
+      <div className="container mx-auto px-6 relative z-10 grid md:grid-cols-12 gap-8 items-center pt-10 md:pt-0">
         {/* Left Column: Description & CTA */}
-        <div className="md:col-span-6 flex flex-col items-start space-y-12 z-20">
+        <div className="md:col-span-6 flex flex-col items-start space-y-8 md:space-y-12 z-20">
           <div className="space-y-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.5 }}
-              className="flex items-center gap-3 text-theme theme-transition tech-mono text-[9px] tracking-[0.4em] uppercase font-bold"
+              className="flex items-center gap-3 text-theme theme-transition tech-mono text-[8px] md:text-[9px] tracking-[0.4em] uppercase font-bold"
             >
               <span className="w-8 h-[1px] bg-theme/50 theme-transition"></span>
               Secure Infrastructure Specialist
@@ -35,7 +35,7 @@ const Hero: React.FC = () => {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 1.2 }}
-              className="text-6xl md:text-[8rem] font-black tight-heading uppercase tracking-tighter font-heading"
+              className="text-5xl sm:text-6xl md:text-[8rem] font-black tight-heading uppercase tracking-tighter font-heading"
             >
               SHADOW<br />
               <span className="text-white/20 hover:text-white transition-colors duration-700 cursor-default">DEFENSE</span>
@@ -46,18 +46,18 @@ const Hero: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 2 }}
-            className="max-w-md space-y-8"
+            className="max-w-md space-y-6 md:space-y-8"
           >
-            <p className="text-lg text-white/40 leading-relaxed font-light border-l border-white/10 pl-6 font-primary">
+            <p className="text-base md:text-lg text-white/40 leading-relaxed font-light border-l border-white/10 pl-6 font-primary">
               Expert in high-stakes anonymity and defensive cyber operations.
-              I design systems that remain invisible while maintaining absolute authority over digital perimeters.
+              I design systems that remain invisible while maintaining absolute authority.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-8 pt-4">
+            <div className="flex flex-col sm:flex-row items-center gap-6 md:gap-8 pt-4 w-full sm:w-auto">
               <motion.button
                 whileHover={{ scale: 1.02, boxShadow: "0 0 40px var(--theme-glow)" }}
                 whileTap={{ scale: 0.98 }}
-                className="group relative px-10 py-5 bg-white text-black font-black text-xs uppercase tracking-[0.3em] transition-all duration-500 overflow-hidden rounded-sm tech-mono"
+                className="w-full sm:w-auto px-10 py-5 bg-white text-black font-black text-[10px] uppercase tracking-[0.3em] transition-all duration-500 overflow-hidden rounded-sm tech-mono"
               >
                 Initiate Protocol
               </motion.button>
@@ -67,7 +67,7 @@ const Hero: React.FC = () => {
                 animate={{ opacity: 0.3 }}
                 transition={{ delay: 3, duration: 1 }}
                 whileHover={{ opacity: 1 }}
-                className="text-[9px] font-bold uppercase tracking-[0.5em] border-b border-white/10 pb-2 hover:border-theme transition-all duration-500 delay-200 theme-transition tech-mono"
+                className="text-[8px] md:text-[9px] font-bold uppercase tracking-[0.5em] border-b border-white/10 pb-2 hover:border-theme transition-all duration-500 delay-200 theme-transition tech-mono"
               >
                 Decrypted Logs
               </motion.button>
@@ -76,7 +76,7 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Center/Right: Hero Image */}
-        <div className="md:col-span-6 flex justify-center items-end h-[70vh] md:h-[90vh] relative">
+        <div className="md:col-span-6 flex justify-center items-end h-[50vh] sm:h-[60vh] md:h-[90vh] relative">
           <motion.div
             initial={{ opacity: 0, filter: 'blur(20px) grayscale(1)' }}
             animate={{ opacity: 1, filter: 'blur(0px) grayscale(0.2)' }}
@@ -103,17 +103,18 @@ const Hero: React.FC = () => {
       </div>
 
       {/* Bottom status bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 border-t border-white/5 flex items-center justify-between px-12 tech-mono text-[9px] text-white/20 tracking-widest uppercase bg-black/80 md:bg-black/40 md:backdrop-blur-sm">
-        <div className="flex items-center gap-6">
+      <div className="absolute bottom-0 left-0 right-0 h-14 md:h-16 border-t border-white/5 flex items-center justify-between px-6 md:px-12 tech-mono text-[8px] md:text-[9px] text-white/20 tracking-widest uppercase bg-black/80 md:bg-black/40 md:backdrop-blur-sm">
+        <div className="flex items-center gap-4 md:gap-6">
           <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-theme theme-transition animate-pulse"></span>
-            Connection: Secure
+            <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-theme theme-transition animate-pulse"></span>
+            <span className="hidden xs:inline">Sec_Channel</span>
+            <span className="xs:hidden">Secure</span>
           </span>
-          <span className="hidden md:inline">Uptime: 99.999%</span>
+          <span className="hidden md:inline">Uptime: 99.9%</span>
         </div>
-        <div className="flex items-center gap-8">
-          <span>0x72a...ff01</span>
-          <span>AES-256 Enabled</span>
+        <div className="flex items-center gap-4 md:gap-8">
+          <span className="hidden sm:inline">0x72a...ff01</span>
+          <span>AES_256</span>
         </div>
       </div>
     </section>

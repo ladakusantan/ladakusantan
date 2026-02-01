@@ -41,10 +41,11 @@ const Navbar: React.FC = () => {
         <motion.button
           whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,1)", color: "black" }}
           whileTap={{ scale: 0.98 }}
-          className={`px-6 py-2 border border-white/10 text-[9px] font-bold uppercase tracking-[0.4em] transition-all duration-500 rounded-sm tech-mono ${isScrolled ? 'bg-white/10' : ''
+          className={`px-4 sm:px-6 py-2 border border-white/10 text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.4em] transition-all duration-500 rounded-sm tech-mono ${isScrolled ? 'bg-white/10' : ''
             }`}
         >
-          ENCRYPTED CHANNEL
+          <span className="hidden xs:inline">ENCRYPTED CHANNEL</span>
+          <span className="xs:hidden">ENCRYPT</span>
         </motion.button>
       </div>
     </motion.nav>

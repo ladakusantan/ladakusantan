@@ -115,7 +115,7 @@ const AboutMe: React.FC<{ onThemeChange: (index: number) => void }> = ({ onTheme
       >
         <div className="flex px-[10vw] md:px-[25vw] gap-8 pb-12">
           {IDENTITY_CARDS.map((card, idx) => (
-            <div key={idx} className="snap-center flex-shrink-0 w-[80vw] md:w-[50vw] pointer-events-none md:pointer-events-auto">
+            <div key={idx} className="snap-center flex-shrink-0 w-[85vw] md:w-[50vw] pointer-events-none md:pointer-events-auto">
               <motion.div
                 animate={{
                   opacity: activeIndex === idx ? 1 : 0.1,
@@ -123,26 +123,26 @@ const AboutMe: React.FC<{ onThemeChange: (index: number) => void }> = ({ onTheme
                   filter: activeIndex === idx ? 'blur(0px)' : 'blur(8px)'
                 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="glass-panel p-8 md:p-16 rounded-3xl border border-white/5 flex flex-col gap-10 relative overflow-hidden h-[500px] md:h-[600px] justify-center select-none"
+                className="glass-panel p-8 md:p-16 rounded-3xl border border-white/5 flex flex-col gap-6 md:gap-10 relative overflow-hidden min-h-[400px] md:h-[600px] justify-center select-none"
               >
                 {/* ID Overlay */}
-                <div className="absolute top-0 right-0 p-8 tech-mono text-[10px] text-white/5 uppercase tracking-[0.5em] rotate-90 origin-top-right">
+                <div className="absolute top-0 right-0 p-6 md:p-8 tech-mono text-[8px] md:text-[10px] text-white/5 uppercase tracking-[0.5em] rotate-90 origin-top-right hidden xs:block">
                   ENTRY_NODE_{idx + 1}
                 </div>
 
-                <div className="space-y-4">
-                  <h4 className="tech-mono text-[11px] text-theme theme-transition tracking-widest uppercase font-black">{card.tag}</h4>
-                  <h2 className="text-4xl md:text-7xl font-black tracking-tighter uppercase leading-[0.85] text-white font-heading">
+                <div className="space-y-3 md:space-y-4">
+                  <h4 className="tech-mono text-[9px] md:text-[11px] text-theme theme-transition tracking-widest uppercase font-black">{card.tag}</h4>
+                  <h2 className="text-3xl sm:text-4xl md:text-7xl font-black tracking-tighter uppercase leading-[0.85] text-white font-heading">
                     {card.title.split('_')[0]}<br />
                     <span className="text-white/20 italic">{card.title.split('_')[1]}</span>
                   </h2>
                 </div>
 
-                <div className="space-y-6 max-w-xl">
-                  <p className="text-white/70 text-lg md:text-2xl leading-tight font-light tracking-tight border-l border-theme/20 pl-6 theme-transition font-primary">
+                <div className="space-y-4 md:space-y-6 max-w-xl">
+                  <p className="text-white/70 text-base md:text-2xl leading-tight font-light tracking-tight border-l border-theme/20 pl-4 md:pl-6 theme-transition font-primary">
                     {card.content}
                   </p>
-                  <p className="text-white/40 text-sm md:text-lg leading-relaxed font-light pl-6 font-primary">
+                  <p className="text-white/40 text-xs md:text-lg leading-relaxed font-light pl-4 md:pl-6 font-primary">
                     {card.subtext}
                   </p>
                 </div>

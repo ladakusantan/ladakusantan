@@ -67,13 +67,13 @@ const CSS3DProjectNode: React.FC<{
   // HELIX CALCULATIONS
   const xBase = useTransform(progress, (p: number) => {
     const angle = (p * Math.PI * 8) + (index * (Math.PI * 2 / 5));
-    const r = 600;
+    const r = typeof window !== 'undefined' && window.innerWidth < 768 ? 300 : 600;
     return Math.cos(angle) * r;
   });
 
   const zBase = useTransform(progress, (p: number) => {
     const angle = (p * Math.PI * 8) + (index * (Math.PI * 2 / 5));
-    const r = 600;
+    const r = typeof window !== 'undefined' && window.innerWidth < 768 ? 300 : 600;
     return Math.sin(angle) * r;
   });
 
@@ -81,7 +81,7 @@ const CSS3DProjectNode: React.FC<{
   const yBase = useTransform(progress, localInput, [1500, 800, 300, -180, -180, -180, -600, -1200, -2000]);
 
   // Center override radius logic: Maintain 0 radius during pin
-  const radiusControl = useTransform(progress, localInput, [600, 400, 0, 0, 0, 0, 0, 400, 600]);
+  const radiusControl = useTransform(progress, localInput, [typeof window !== 'undefined' && window.innerWidth < 768 ? 300 : 600, 200, 0, 0, 0, 0, 0, 200, typeof window !== 'undefined' && window.innerWidth < 768 ? 300 : 600]);
   const xFinal = useTransform([progress, radiusControl], ([p, r]) => {
     const angle = (p as number * Math.PI * 6) + (index * (Math.PI * 2 / 3));
     return Math.cos(angle) * (r as number);
@@ -160,7 +160,7 @@ const CSS3DProjectNode: React.FC<{
         filter: useTransform(blur, b => b <= 0.1 ? 'none' : `blur(${b}px)`),
         willChange: 'transform, opacity',
       }}
-      className="w-[300px] md:w-[440px] h-[380px] md:h-[480px] preserve-3d cursor-pointer"
+      className="w-[280px] sm:w-[320px] md:w-[440px] h-[360px] md:h-[480px] preserve-3d cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -168,26 +168,16 @@ const CSS3DProjectNode: React.FC<{
       <div className="relative w-full h-full preserve-3d">
 
         {/* TOP FACE */}
-        <div className="cube-face bg-black/80 border border-theme/20 shadow-[inset_0_0_50px_rgba(0,255,204,0.1)]" style={{ transform: 'rotateX(90deg) translateZ(220px)', height: '100px', top: 'calc(50% - 50px)' }}>
+        <div className="cube-face bg-black/80 border border-theme/20 shadow-[inset_0_0_50px_rgba(0,255,204,0.1)]" style={{ transform: `rotateX(90deg) translateZ(${typeof window !== "undefined" && window.innerWidth < 768 ? 140 : 220}px)`, height: '80px', top: 'calc(50% - 40px)' }}>
           <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,204,0.05)_1px,transparent_1px)] bg-[size:100%_4px]"></div>
         </div>
 
         {/* BOTTOM FACE */}
-        <div className="cube-face bg-black/80 border border-theme/20" style={{ transform: 'rotateX(-90deg) translateZ(220px)', height: '100px', top: 'calc(50% - 50px)' }}></div>
+        <div className="cube-face bg-black/80 border border-theme/20" style={{ transform: `rotateX(-90deg) translateZ(${typeof window !== "undefined" && window.innerWidth < 768 ? 140 : 220}px)`, height: '80px', top: 'calc(50% - 40px)' }}></div>
 
-        {/* LEFT FACE */}
-        <div className="cube-face bg-black border border-theme/10" style={{ transform: 'rotateY(-90deg) translateZ(220px)', width: '100px', left: 'calc(50% - 50px)' }}>
-          <div className="flex flex-col gap-4 p-4 opacity-30 tech-mono text-[6px] text-theme">
-            {[...Array(10)].map((_, i) => <div key={i} className="flex justify-between"><span>MOD_ID_{index}_{i}</span><span>0x{Math.random().toString(16).slice(2, 6)}</span></div>)}
-          </div>
-        </div>
-
-        {/* RIGHT FACE */}
-        <div className="cube-face bg-black border border-theme/10" style={{ transform: 'rotateY(90deg) translateZ(220px)', width: '100px', left: 'calc(50% - 50px)' }}></div>
-
-        {/* MAIN FRONT FACE */}
+        {/* FRONT FACE (CLEANED) */}
         <div
-          className={`cube-face glass-panel rounded-lg p-6 flex flex-col gap-4 preserve-3d ${isFocused ? 'border-theme/60 shadow-[0_0_80px_rgba(0,255,204,0.1)]' : 'border-white/5'}`}
+          className={`cube-face glass-panel rounded-lg p-5 md:p-6 flex flex-col gap-3 md:gap-4 preserve-3d ${isFocused ? 'border-theme/60 shadow-[0_0_80px_rgba(0,255,204,0.1)]' : 'border-white/5'}`}
           style={{
             transform: 'translateZ(50px)',
             perspective: '1200px',
@@ -202,29 +192,17 @@ const CSS3DProjectNode: React.FC<{
             className="absolute inset-0 pointer-events-none z-20"
           />
 
-          <AnimatePresence>
-            {isFocused && (
-              <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 0.15 }} exit={{ opacity: 0 }}
-                className="absolute inset-0 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"
-              />
-            )}
-          </AnimatePresence>
-
           <div className="relative z-30 flex flex-col h-full pointer-events-none preserve-3d">
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-start mb-2">
               <div className="space-y-1">
-                <div className="tech-mono text-[8px] uppercase tracking-[0.4em] text-theme font-black flex items-center gap-2">
+                <div className="tech-mono text-[7px] md:text-[8px] uppercase tracking-[0.4em] text-theme font-black flex items-center gap-2">
                   <div className={`w-1 h-1 rounded-full ${isFocused ? 'bg-theme animate-ping' : 'bg-white/10'}`}></div>
-                  SEC_ASSET // NODE_{index + 1}
+                  SEC_NODE_{index + 1}
                 </div>
-                <h3 className="font-heading text-2xl md:text-3xl font-black tracking-tighter uppercase leading-tight text-white mt-1">
+                <h3 className="font-heading text-xl md:text-3xl font-black tracking-tighter uppercase leading-tight text-white mt-1">
                   {project.title.split(' ')[0]}<br />
                   <span className="text-white/10">{project.title.split(' ').slice(1).join(' ')}</span>
                 </h3>
-              </div>
-              <div className="tech-mono text-[7px] text-theme/40 bg-theme/5 px-2 py-1 border border-theme/10">
-                AUTH_LVL_4
               </div>
             </div>
 
@@ -232,7 +210,7 @@ const CSS3DProjectNode: React.FC<{
               <TypingText text={project.description} active={isFocused} />
             </div>
 
-            <div className="mt-auto space-y-4 preserve-3d">
+            <div className="mt-auto space-y-3 md:space-y-4 preserve-3d">
               <motion.div
                 style={{ transform: useTransform(springTX, () => `translateZ(${isHovered ? 200 : (isFocused ? 60 : 0)}px)`) }}
                 className="aspect-video rounded-sm overflow-hidden border border-white/5 relative group-hover:border-theme/30 transition-all duration-1000 bg-black shadow-[0_60px_120px_rgba(0,0,0,0.9)] cursor-pointer pointer-events-auto"
@@ -256,13 +234,12 @@ const CSS3DProjectNode: React.FC<{
                   />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-transparent"></div>
-                {isFocused && <div className="absolute top-0 left-0 w-full h-[1px] bg-theme/30 animate-[scan_3s_linear_infinite]"></div>}
               </motion.div>
 
               <div className="flex justify-between items-end">
-                <div className="flex flex-wrap gap-1.5 max-w-[60%]">
-                  {project.tags.map((tag: string) => (
-                    <span key={tag} className="tech-mono text-[6px] text-white/30 border border-white/10 px-1.5 py-0.5 rounded-none uppercase">
+                <div className="flex flex-wrap gap-1 md:gap-1.5 max-w-[60%]">
+                  {project.tags.slice(0, 2).map((tag: string) => (
+                    <span key={tag} className="tech-mono text-[6px] text-white/30 border border-white/10 px-1 py-0.5 rounded-none uppercase">
                       {tag}
                     </span>
                   ))}
@@ -270,28 +247,14 @@ const CSS3DProjectNode: React.FC<{
                 <motion.button
                   whileHover={{ y: -2, boxShadow: '0 5px 20px rgba(0,255,204,0.2)', scale: 1.05 }}
                   onClick={onSelect}
-                  className={`px-3 py-1.5 bg-theme text-black tech-mono text-[8px] font-black uppercase tracking-widest transition-all duration-500 pointer-events-auto ${isFocused ? 'opacity-100' : 'opacity-20 grayscale'}`}
+                  className={`px-3 py-1.5 bg-theme text-black tech-mono text-[7px] md:text-[8px] font-black uppercase tracking-widest transition-all duration-500 pointer-events-auto ${isFocused ? 'opacity-100' : 'opacity-20 grayscale'}`}
                 >
-                  ACCESS_NODE
+                  ACCESS
                 </motion.button>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Bounding Box Accents */}
-        {isFocused && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute -inset-2 border border-theme/20 rounded-xl pointer-events-none"
-          >
-            <div className="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-theme"></div>
-            <div className="absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 border-theme"></div>
-            <div className="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-theme"></div>
-            <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-theme"></div>
-          </motion.div>
-        )}
       </div>
     </motion.div>
   );
@@ -349,34 +312,17 @@ const Projects: React.FC<{ onToggleView?: (active: boolean) => void }> = ({ onTo
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300vw] h-[300vw] bg-[radial-gradient(circle,rgba(0,255,204,0.02)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)] animate-[spin_300s_linear_infinite]"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,204,0.01),transparent_80%)]"></div>
-
-          <motion.div
-            style={{ rotate: useTransform(scrollYProgress, [0, 1], [0, 360]) }}
-            className="absolute inset-0"
-          >
-            {[...Array(40)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-0.5 h-0.5 bg-theme/40 rounded-full"
-                style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  opacity: Math.random() * 0.5,
-                }}
-              />
-            ))}
-          </motion.div>
         </div>
 
         <motion.div
           style={{ scale: headerScale, opacity: headerOpacity, filter: hFilter }}
-          className="relative z-50 text-center pointer-events-none mb-[15vh]"
+          className="relative z-50 text-center pointer-events-none mb-[10vh] md:mb-[15vh]"
         >
-          <div className="flex items-center justify-center gap-6 mb-4">
-            <div className="h-[1px] w-24 bg-gradient-to-r from-transparent via-theme/30 to-transparent"></div>
-            <span className="tech-mono text-[10px] tracking-[1.5em] uppercase text-theme font-black">Vortex_Access_Protocol</span>
+          <div className="flex items-center justify-center gap-4 md:gap-6 mb-4">
+            <div className="h-[1px] w-12 md:w-24 bg-gradient-to-r from-transparent via-theme/30 to-transparent"></div>
+            <span className="tech-mono text-[8px] md:text-[10px] tracking-[1.5em] uppercase text-theme font-black">Vortex_Sync</span>
           </div>
-          <h2 className="text-6xl md:text-[10rem] font-black tracking-tighter leading-[0.7] uppercase font-heading">
+          <h2 className="text-4xl sm:text-6xl md:text-[10rem] font-black tracking-tighter leading-[0.7] uppercase font-heading">
             SELECTED<br />
             <span className="text-white/5 italic">OPERATIONS</span>
           </h2>

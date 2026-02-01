@@ -8,6 +8,9 @@ export default {
             colors: {
                 theme: "var(--theme-color)",
             },
+            screens: {
+                'xs': '475px',
+            },
             fontFamily: {
                 primary: ["var(--font-primary)"],
                 heading: ["var(--font-heading)"],

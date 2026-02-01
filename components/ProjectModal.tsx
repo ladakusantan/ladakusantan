@@ -28,11 +28,18 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="relative w-full max-w-6xl h-full max-h-[90vh] bg-[#050505] border border-theme/20 rounded-lg overflow-hidden shadow-[0_0_100px_rgba(0,255,204,0.1)] flex flex-col md:flex-row"
+                    className="relative w-full max-w-6xl h-full max-h-[95vh] md:max-h-[90vh] bg-[#050505] border border-theme/20 rounded-lg overflow-hidden shadow-[0_0_100px_rgba(0,255,204,0.1)] flex flex-col md:flex-row"
                 >
+                    {/* MOBILE CLOSE BUTTON - TOP RIGHT */}
+                    <button
+                        onClick={onClose}
+                        className="absolute top-4 right-4 z-[3000] p-2 bg-theme text-black md:hidden rounded-full shadow-lg"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
 
                     {/* LEFT SIDE: CINEMATIC FEED */}
-                    <div className="relative w-full md:w-2/3 h-64 md:h-full bg-black overflow-hidden group">
+                    <div className="relative w-full md:w-2/3 h-64 md:h-full bg-black overflow-hidden group flex-shrink-0">
                         {project.video ? (
                             <video
                                 src={project.video}
@@ -49,19 +56,15 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                         {/* SCANLINE OVERLAY */}
                         <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50.5%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[size:100%_2px,3px_100%]" />
 
-                        {/* RADIAL GLOW */}
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%)]" />
-
                         {/* HUD ELEMENTS */}
-                        <div className="absolute top-6 left-6 tech-mono text-[8px] text-theme/40 space-y-1">
+                        <div className="absolute top-6 left-6 tech-mono text-[8px] text-theme/40 space-y-1 hidden sm:block">
                             <div>LIVE_INTEL_FEED :: ACTIVE</div>
-                            <div>SIGNAL_STRENGTH :: 98.4%</div>
                             <div>ENCRYPTION :: AES-4096</div>
                         </div>
 
                         <div className="absolute bottom-6 left-6 tech-mono">
-                            <div className="text-theme text-xs font-black uppercase tracking-[0.3em] mb-2">SYSTEM_TARGET</div>
-                            <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none font-heading">
+                            <div className="text-theme text-[9px] font-black uppercase tracking-[0.3em] mb-2">SYSTEM_TARGET</div>
+                            <h2 className="text-3xl md:text-6xl font-black text-white uppercase tracking-tighter leading-none font-heading">
                                 {project.title.split(' ')[0]}<br />
                                 <span className="text-white/20">{project.title.split(' ').slice(1).join(' ')}</span>
                             </h2>
@@ -80,16 +83,14 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10 space-y-8">
+                        <div className="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-10 space-y-8 no-scrollbar">
                             {/* OVERVIEW */}
                             <section className="space-y-4">
                                 <div className="flex items-center gap-2 text-theme/40 tech-mono text-[10px] uppercase font-bold">
                                     <Info className="w-3 h-3" /> Mission Briefing
                                 </div>
                                 <p className="text-white/70 text-sm md:text-base leading-relaxed tracking-wide font-light font-primary">
-                                    {project.description} This system represents the pinnacle of defensive architecture,
-                                    engineered to withstand complex adversarial maneuvers and persistent threat vectors.
-                                    The implementation focuses on minimizing attack surface while maintaining peak operational efficiency.
+                                    {project.description}
                                 </p>
                             </section>
 
