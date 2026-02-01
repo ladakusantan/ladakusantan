@@ -78,37 +78,45 @@ const App: React.FC = () => {
       if (isPaused) return;
 
       if (currentTargetIndex < totalProjects) {
+        // PRECISION TIMING: Target is precisely aligned at 0.5 progress
         const target = focalPoints[currentTargetIndex];
         const dist = target - currentScroll;
 
-        if (dist > 2) {
-          // DYNAMIC VELOCITY: Fast when far, smooth & slow when near
-          // Max speed 12px, Min speed 1px
-          const dynamicSpeed = Math.max(1, Math.min(12, dist / 25));
+        if (dist > 5) { // Stop slightly earlier for a clean landing
+          const dynamicSpeed = Math.max(1, Math.min(15, dist / 20));
           window.scrollBy(0, dynamicSpeed);
           requestAnimationFrame(autopilot);
         } else {
-          // Arrived at project focal point - TRIGGER IMMEDIATELY
+          // STEP 1: ARRIVE AT NODE
           isPaused = true;
-          setActiveTourProjectIndex(currentTargetIndex);
 
+          // STEP 2: PAUSE FOR READING (Node focus phase)
           setTimeout(() => {
             if (!tourRef.current) return;
 
-            // AUTO EXIT AFTER DETAILS SHOWN
-            setActiveTourProjectIndex(null);
+            // STEP 3: TRIGGER INSTANT DIVE AT PEAK FOCUS
+            setActiveTourProjectIndex(currentTargetIndex);
 
+            // STEP 4: PAUSE INSIDE MODAL (Detailed review phase)
             setTimeout(() => {
               if (!tourRef.current) return;
-              isPaused = false;
-              currentTargetIndex++;
-              requestAnimationFrame(autopilot);
-            }, 1200); // Buffer for modal close transition
-          }, 4500); // Increased to 4.5s for better reading time
+
+              // STEP 5: AUTO EXIT
+              setActiveTourProjectIndex(null);
+
+              // STEP 6: CONTINUE TO NEXT
+              setTimeout(() => {
+                if (!tourRef.current) return;
+                isPaused = false;
+                currentTargetIndex++;
+                requestAnimationFrame(autopilot);
+              }, 1200); // Wait for modal exit animation
+            }, 6000); // 6s to read full details
+          }, 2500); // 2.5s to read the node's initial description
         }
       } else if (currentScroll < destination) {
         const distToAbout = destination - currentScroll;
-        const speedToAbout = Math.max(2, Math.min(15, distToAbout / 20));
+        const speedToAbout = Math.max(2, Math.min(20, distToAbout / 15));
         window.scrollBy(0, speedToAbout);
         requestAnimationFrame(autopilot);
       } else {
